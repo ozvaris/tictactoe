@@ -3,6 +3,7 @@ package com.example.tictactoe
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.view.Gravity
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
@@ -42,7 +43,7 @@ class GameActivity : AppCompatActivity() {
 
         buttons = Array(gridLayout.childCount) { i ->
             val button = gridLayout.getChildAt(i) as Button
-            button.text = gameBoard[i].toString()
+            // button.text = gameBoard[i].toString()
             button
         }
 
@@ -51,7 +52,8 @@ class GameActivity : AppCompatActivity() {
 
     private fun showGameOverDialog() {
         val builder = AlertDialog.Builder(this)
-        builder.setTitle("Game Over")
+
+        val dialog = builder.setTitle("Game Over")
             .setMessage("Do you want to play again or exit?")
             .setPositiveButton("New Game") { _, _ ->
                 finish()
@@ -61,7 +63,19 @@ class GameActivity : AppCompatActivity() {
                 finish()
             }
             .setCancelable(false)
-            .show()
+            .create()
+
+        dialog.setOnShowListener {
+            val window = dialog.window
+            if (window != null) {
+                val layoutParams = window.attributes
+                layoutParams.gravity = Gravity.CENTER_HORIZONTAL or Gravity.TOP
+                layoutParams.y = resources.getDimensionPixelSize(R.dimen.dialog_margin_top) // Add this value to your dimensions file
+                window.attributes = layoutParams
+            }
+        }
+
+        dialog.show()
     }
 
     fun onCellClick(view: View) {

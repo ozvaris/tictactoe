@@ -29,53 +29,32 @@
         app:layout_constraintTop_toBottomOf="@id/statusTextView">
 
         <Button
-            android:layout_width="75dp"
-            android:layout_height="75dp"
-            android:layout_margin="8dp"
+            style="@style/TicTacToeButton"
             android:onClick="onCellClick" />
         <Button
-            android:layout_width="75dp"
-            android:layout_height="75dp"
-            android:layout_margin="8dp"
+            style="@style/TicTacToeButton"
             android:onClick="onCellClick" />
         <Button
-            android:layout_width="75dp"
-            android:layout_height="75dp"
-            android:layout_margin="8dp"
+            style="@style/TicTacToeButton"
             android:onClick="onCellClick" />
         <Button
-            android:layout_width="75dp"
-            android:layout_height="75dp"
-            android:layout_margin="8dp"
+            style="@style/TicTacToeButton"
             android:onClick="onCellClick" />
         <Button
-            android:layout_width="75dp"
-            android:layout_height="75dp"
-            android:layout_margin="8dp"
+            style="@style/TicTacToeButton"
             android:onClick="onCellClick" />
         <Button
-            android:layout_width="75dp"
-            android:layout_height="75dp"
-            android:layout_margin="8dp"
+            style="@style/TicTacToeButton"
             android:onClick="onCellClick" />
         <Button
-            android:layout_width="75dp"
-            android:layout_height="75dp"
-            android:layout_margin="8dp"
+            style="@style/TicTacToeButton"
             android:onClick="onCellClick" />
         <Button
-            android:layout_width="75dp"
-            android:layout_height="75dp"
-            android:layout_margin="8dp"
+            style="@style/TicTacToeButton"
             android:onClick="onCellClick" />
         <Button
-            android:layout_width="75dp"
-            android:layout_height="75dp"
-            android:layout_margin="8dp"
+            style="@style/TicTacToeButton"
             android:onClick="onCellClick" />
-
-
-        <!-- Add more buttons, for a total of 9 -->
 
     </androidx.gridlayout.widget.GridLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
