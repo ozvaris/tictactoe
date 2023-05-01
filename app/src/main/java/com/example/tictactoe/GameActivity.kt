@@ -77,7 +77,12 @@ class GameActivity : AppCompatActivity() {
                         gameBoard
                     )
                 ) {
-                    gameStatusText.text = "Game Over"
+                    // Add winner information to the gameStatusText
+                    if (evaluateBoard(gameBoard) == 10 || evaluateBoard(gameBoard) == -10) {
+                        gameStatusText.text = getString(R.string.player_wins, currentPlayer)
+                    } else {
+                        gameStatusText.text = "Draw"
+                    }
                     showGameOverDialog()
                 } else {
                     currentPlayer = if (currentPlayer == 'X') 'O' else 'X'
@@ -199,7 +204,12 @@ class GameActivity : AppCompatActivity() {
                 gameBoard
             )
         ) {
-            gameStatusText.text = "Game Over"
+            // Add winner information to the gameStatusText
+            if (evaluateBoard(gameBoard) == 10 || evaluateBoard(gameBoard) == -10) {
+                gameStatusText.text = getString(R.string.player_wins, currentPlayer)
+            } else {
+                gameStatusText.text = "Draw"
+            }
             showGameOverDialog()
         } else {
             currentPlayer = if (currentPlayer == 'X') 'O' else 'X'
