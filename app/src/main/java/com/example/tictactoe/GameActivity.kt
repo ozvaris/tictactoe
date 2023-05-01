@@ -16,20 +16,42 @@ import kotlin.random.Random
 class GameActivity : AppCompatActivity() {
     private var currentPlayer: Char = 'X'
 
+    private var Player1Name: String = "Player1"
+    private var Player2Name: String = "Player2"
+
+
+
+
     private lateinit var gameMode: GameMode
     private lateinit var gameStatusText: TextView
 
     private lateinit var gameBoard: Array<Char>
     private lateinit var buttons: Array<Button>
 
-    inline fun <reified T : Serializable> Intent.serializable(key: String) = when {
-        Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> getSerializableExtra(
-            key,
-            T::class.java
-        )
-        else -> @Suppress("DEPRECATION") getSerializableExtra(key) as? T
-    }
+    // inline fun <reified T : Serializable> Intent.serializable(key: String) = when {
+    //     Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> getSerializableExtra(
+    //         key,
+    //         T::class.java
+    //     )
+    //     else -> @Suppress("DEPRECATION") getSerializableExtra(key) as? T
+    // }
 
+    private fun showPlayerFirstDialog() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Who goes first?")
+            .setCancelable(false)
+            .setPositiveButton("Player") { _, _ ->
+                // Oyuncu önce başlar, herhangi bir değişiklik yapmaya gerek yok
+                Player1Name = "Player"
+                Player2Name = "Computer"
+            }
+            .setNegativeButton("Computer") { _, _ ->
+                Player1Name = "Computer"
+                Player2Name = "Player"
+                computerMove()
+            }
+            .show()
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_game)
@@ -47,14 +69,22 @@ class GameActivity : AppCompatActivity() {
             button
         }
 
-        gameStatusText.text = getString(R.string.player_turn, currentPlayer)
+        gameStatusText.text = getString(R.string.player_turn, getPlayerName())
+
+        if (gameMode == GameMode.PvC) {
+            showPlayerFirstDialog()
+        }
     }
 
-    private fun showGameOverDialog() {
+    private fun getPlayerName() : String {
+        return if (currentPlayer == 'X') Player1Name else Player2Name
+    }
+
+    private fun showGameOverDialog(resultMessage: String) {
         val builder = AlertDialog.Builder(this)
 
         val dialog = builder.setTitle("Game Over")
-            .setMessage("Do you want to play again or exit?")
+            .setMessage("$resultMessage\nDo you want to play again or exit?")
             .setPositiveButton("New Game") { _, _ ->
                 finish()
                 startActivity(intent)
@@ -93,16 +123,16 @@ class GameActivity : AppCompatActivity() {
                 ) {
                     // Add winner information to the gameStatusText
                     if (evaluateBoard(gameBoard) == 10 || evaluateBoard(gameBoard) == -10) {
-                        gameStatusText.text = getString(R.string.player_wins, currentPlayer)
+                        gameStatusText.text = getString(R.string.player_wins, getPlayerName())
                     } else {
                         gameStatusText.text = "Draw"
                     }
-                    showGameOverDialog()
+                    showGameOverDialog(gameStatusText.text.toString())
                 } else {
                     currentPlayer = if (currentPlayer == 'X') 'O' else 'X'
-                    gameStatusText.text = getString(R.string.player_turn, currentPlayer)
+                    gameStatusText.text = getString(R.string.player_turn, getPlayerName())
 
-                    if (gameMode == GameMode.PvC && currentPlayer == 'O') {
+                    if (gameMode == GameMode.PvC) {
                         computerMove()
                     }
                 }
@@ -220,14 +250,14 @@ class GameActivity : AppCompatActivity() {
         ) {
             // Add winner information to the gameStatusText
             if (evaluateBoard(gameBoard) == 10 || evaluateBoard(gameBoard) == -10) {
-                gameStatusText.text = getString(R.string.player_wins, currentPlayer)
+                gameStatusText.text = getString(R.string.player_wins, getPlayerName())
             } else {
                 gameStatusText.text = "Draw"
             }
-            showGameOverDialog()
+            showGameOverDialog(gameStatusText.text.toString())
         } else {
             currentPlayer = if (currentPlayer == 'X') 'O' else 'X'
-            gameStatusText.text = getString(R.string.player_turn, currentPlayer)
+            gameStatusText.text = getString(R.string.player_turn, getPlayerName())
 
             if (gameMode == GameMode.CvC) {
                 computerMove()
