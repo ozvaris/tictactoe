@@ -6,7 +6,9 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Button
-
+enum class Difficulty {
+    EASY, MEDIUM, HARD
+}
 enum class GameMode {
     PvP,
     PvC,
@@ -17,7 +19,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var menu: Menu
     private var selectedDifficulty: Int = R.id.easy
-    private var boardSize: Int = 3
+    private var difficulty: Difficulty = Difficulty.EASY
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -28,15 +30,11 @@ class MainActivity : AppCompatActivity() {
         val exitGameButton = findViewById<Button>(R.id.exitButton)
 
         pvpButton.setOnClickListener {
-            val intent = Intent(this, GameActivity::class.java)
-            intent.putExtra("gameMode", GameMode.PvP.ordinal)
-            startActivity(intent)
+            runGame(GameMode.PvP)
         }
 
         pvcButton.setOnClickListener {
-            val intent = Intent(this, GameActivity::class.java)
-            intent.putExtra("gameMode", GameMode.PvC.ordinal)
-            startActivity(intent)
+            runGame(GameMode.PvC)
         }
 
         // cvcButton.setOnClickListener {
@@ -48,6 +46,13 @@ class MainActivity : AppCompatActivity() {
         exitGameButton.setOnClickListener {
             finish()
         }
+    }
+
+    private fun runGame(gameMode : GameMode) {
+        val intent = Intent(this, GameActivity::class.java)
+        intent.putExtra("gameMode", gameMode.ordinal)
+        intent.putExtra("difficulty", difficulty.ordinal)
+        startActivity(intent)
     }
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.main_menu, menu)
@@ -77,15 +82,17 @@ class MainActivity : AppCompatActivity() {
         return when (item.itemId) {
             R.id.easy -> {
                 // Easy seçeneği seçildiğinde yapılacak işlemler
+                difficulty = Difficulty.EASY
                 true
             }
             R.id.medium -> {
                 // Medium seçeneği seçildiğinde yapılacak işlemler
-                boardSize = 6
+                difficulty = Difficulty.MEDIUM
                 true
             }
             R.id.hard -> {
                 // Hard seçeneği seçildiğinde yapılacak işlemler
+                difficulty = Difficulty.HARD
                 true
             }
             else -> super.onOptionsItemSelected(item)

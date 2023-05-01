@@ -12,8 +12,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.gridlayout.widget.GridLayout
 import java.io.Serializable
 import kotlin.random.Random
-
 class GameActivity : AppCompatActivity() {
+    private var difficulty: Difficulty = Difficulty.MEDIUM
     private var currentPlayer: Char = 'X'
 
     private var Player1Name: String = "Player1"
@@ -57,7 +57,7 @@ class GameActivity : AppCompatActivity() {
         val gridLayout: GridLayout = findViewById(R.id.gridLayout)
 
         gameMode = GameMode.values()[intent.getIntExtra("gameMode", 0)]
-
+        difficulty = Difficulty.values()[intent.getIntExtra("difficulty", 0)]
         gameBoard = arrayOf('1', '2', '3', '4', '5', '6', '7', '8', '9')
 
         buttons = Array(gridLayout.childCount) { i ->
@@ -241,7 +241,25 @@ class GameActivity : AppCompatActivity() {
             calculatedCellIndex = computerMoveRandom(gameBoard, currentPlayer)
         }
         else {
-            calculatedCellIndex = computerMoveMinMax(gameBoard, currentPlayer)
+            calculatedCellIndex = when (difficulty) {
+                Difficulty.EASY -> {
+                    val randomThreshold = 0.2
+                    if (Random.nextDouble() < randomThreshold) {
+                        computerMoveRandom(gameBoard, currentPlayer)
+                    } else {
+                        computerMoveMinMax(gameBoard, currentPlayer)
+                    }
+                }
+                Difficulty.MEDIUM -> {
+                    val randomThreshold = 0.5
+                    if (Random.nextDouble() < randomThreshold) {
+                        computerMoveRandom(gameBoard, currentPlayer)
+                    } else {
+                        computerMoveMinMax(gameBoard, currentPlayer)
+                    }
+                }
+                Difficulty.HARD -> computerMoveMinMax(gameBoard, currentPlayer)
+            }
         }
 
         buttons[calculatedCellIndex].text = currentPlayer.toString()
