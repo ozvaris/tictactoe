@@ -19,6 +19,7 @@ class MainActivity : AppCompatActivity() {
         val pvpButton = findViewById<Button>(R.id.pvpButton)
         val pvcButton = findViewById<Button>(R.id.pvcButton)
         val cvcButton = findViewById<Button>(R.id.cvcButton)
+        val exitGameButton = findViewById<Button>(R.id.exitButton)
 
         pvpButton.setOnClickListener {
             val intent = Intent(this, GameActivity::class.java)
@@ -36,6 +37,10 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, GameActivity::class.java)
             intent.putExtra("gameMode", GameMode.CvC.ordinal)
             startActivity(intent)
+        }
+
+        exitGameButton.setOnClickListener {
+            finish()
         }
     }
 }

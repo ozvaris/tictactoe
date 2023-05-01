@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.gridlayout.widget.GridLayout
 import java.io.Serializable
@@ -48,6 +49,21 @@ class GameActivity : AppCompatActivity() {
         gameStatusText.text = getString(R.string.player_turn, currentPlayer)
     }
 
+    private fun showGameOverDialog() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Game Over")
+            .setMessage("Do you want to play again or exit?")
+            .setPositiveButton("New Game") { _, _ ->
+                finish()
+                startActivity(intent)
+            }
+            .setNegativeButton("Exit") { _, _ ->
+                finish()
+            }
+            .setCancelable(false)
+            .show()
+    }
+
     fun onCellClick(view: View) {
         if (gameMode != GameMode.CvC) {
             val button = view as Button
@@ -62,6 +78,7 @@ class GameActivity : AppCompatActivity() {
                     )
                 ) {
                     gameStatusText.text = "Game Over"
+                    showGameOverDialog()
                 } else {
                     currentPlayer = if (currentPlayer == 'X') 'O' else 'X'
                     gameStatusText.text = getString(R.string.player_turn, currentPlayer)
@@ -87,6 +104,7 @@ class GameActivity : AppCompatActivity() {
             )
         ) {
             gameStatusText.text = "Game Over"
+            showGameOverDialog()
         } else {
             currentPlayer = if (currentPlayer == 'X') 'O' else 'X'
             gameStatusText.text = getString(R.string.player_turn, currentPlayer)
