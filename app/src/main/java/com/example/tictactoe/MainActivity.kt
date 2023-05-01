@@ -17,6 +17,38 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var menu: Menu
     private var selectedDifficulty: Int = R.id.easy
+    private var boardSize: Int = 3
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+
+        val pvpButton = findViewById<Button>(R.id.pvpButton)
+        val pvcButton = findViewById<Button>(R.id.pvcButton)
+        // val cvcButton = findViewById<Button>(R.id.cvcButton)
+        val exitGameButton = findViewById<Button>(R.id.exitButton)
+
+        pvpButton.setOnClickListener {
+            val intent = Intent(this, GameActivity::class.java)
+            intent.putExtra("gameMode", GameMode.PvP.ordinal)
+            startActivity(intent)
+        }
+
+        pvcButton.setOnClickListener {
+            val intent = Intent(this, GameActivity::class.java)
+            intent.putExtra("gameMode", GameMode.PvC.ordinal)
+            startActivity(intent)
+        }
+
+        // cvcButton.setOnClickListener {
+        //     val intent = Intent(this, GameActivity::class.java)
+        //     intent.putExtra("gameMode", GameMode.CvC.ordinal)
+        //     startActivity(intent)
+        // }
+
+        exitGameButton.setOnClickListener {
+            finish()
+        }
+    }
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.main_menu, menu)
         menu.findItem(selectedDifficulty)?.isChecked = true
@@ -49,6 +81,7 @@ class MainActivity : AppCompatActivity() {
             }
             R.id.medium -> {
                 // Medium seçeneği seçildiğinde yapılacak işlemler
+                boardSize = 6
                 true
             }
             R.id.hard -> {
@@ -56,37 +89,6 @@ class MainActivity : AppCompatActivity() {
                 true
             }
             else -> super.onOptionsItemSelected(item)
-        }
-    }
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-
-        val pvpButton = findViewById<Button>(R.id.pvpButton)
-        val pvcButton = findViewById<Button>(R.id.pvcButton)
-        // val cvcButton = findViewById<Button>(R.id.cvcButton)
-        val exitGameButton = findViewById<Button>(R.id.exitButton)
-
-        pvpButton.setOnClickListener {
-            val intent = Intent(this, GameActivity::class.java)
-            intent.putExtra("gameMode", GameMode.PvP.ordinal)
-            startActivity(intent)
-        }
-
-        pvcButton.setOnClickListener {
-            val intent = Intent(this, GameActivity::class.java)
-            intent.putExtra("gameMode", GameMode.PvC.ordinal)
-            startActivity(intent)
-        }
-
-        // cvcButton.setOnClickListener {
-        //     val intent = Intent(this, GameActivity::class.java)
-        //     intent.putExtra("gameMode", GameMode.CvC.ordinal)
-        //     startActivity(intent)
-        // }
-
-        exitGameButton.setOnClickListener {
-            finish()
         }
     }
 }

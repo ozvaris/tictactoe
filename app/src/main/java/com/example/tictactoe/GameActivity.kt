@@ -19,9 +19,6 @@ class GameActivity : AppCompatActivity() {
     private var Player1Name: String = "Player1"
     private var Player2Name: String = "Player2"
 
-
-
-
     private lateinit var gameMode: GameMode
     private lateinit var gameStatusText: TextView
 
@@ -48,7 +45,7 @@ class GameActivity : AppCompatActivity() {
             .setNegativeButton("Computer") { _, _ ->
                 Player1Name = "Computer"
                 Player2Name = "Player"
-                computerMove()
+                computerMove(true)
             }
             .show()
     }
@@ -236,11 +233,16 @@ class GameActivity : AppCompatActivity() {
     }
 
 
-    private fun computerMove() {
+    private fun computerMove(randomPlay: Boolean? = false) {
 
-        // val randomCellIndex = computerMoveRandom(gameBoard, currentPlayer)
+        var calculatedCellIndex : Int = 0
 
-        val calculatedCellIndex = computerMoveMinMax(gameBoard, currentPlayer)
+        if(randomPlay == true) {
+            calculatedCellIndex = computerMoveRandom(gameBoard, currentPlayer)
+        }
+        else {
+            calculatedCellIndex = computerMoveMinMax(gameBoard, currentPlayer)
+        }
 
         buttons[calculatedCellIndex].text = currentPlayer.toString()
 
