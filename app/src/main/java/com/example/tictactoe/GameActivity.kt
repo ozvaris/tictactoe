@@ -91,13 +91,109 @@ class GameActivity : AppCompatActivity() {
         }
     }
 
-    private fun computerMove() {
+    fun minimax(board: Array<Char>, depth: Int, isMaxPlayer: Boolean): Int {
+        val score = evaluateBoard(board)
+
+        if (score == 10) {
+            return score - depth
+        }
+
+        if (score == -10) {
+            return score + depth
+        }
+
+        if (isBoardFull(board)) {
+            return 0
+        }
+
+        if (isMaxPlayer) {
+            var bestScore = Int.MIN_VALUE
+
+            for (i in 0..8) {
+                if (board[i] != 'X' && board[i] != 'O') {
+                    board[i] = 'X'
+
+                    val currentScore = minimax(board, depth + 1, false)
+
+                    board[i] = (i + 49).toChar()
+
+                    bestScore = maxOf(bestScore, currentScore)
+                }
+            }
+
+            return bestScore
+        } else {
+            var bestScore = Int.MAX_VALUE
+            for (i in 0..8) {
+                if (board[i] != 'X' && board[i] != 'O') {
+                    board[i] = 'O'
+
+                    val currentScore = minimax(board, depth + 1, true)
+
+                    board[i] = (i + 49).toChar()
+
+                    bestScore = minOf(bestScore, currentScore)
+                }
+            }
+
+            return bestScore
+        }
+    }
+
+    fun computerMoveMinMax(board: Array<Char>, symbol: Char): Int{
+        var bestScore: Int
+        var bestMove = -1
+
+        if (symbol == 'X') {
+            bestScore = Int.MIN_VALUE
+        } else {
+            bestScore = Int.MAX_VALUE
+        }
+
+        for (i in 0..8) {
+            if (board[i] != 'X' && board[i] != 'O') {
+                board[i] = symbol
+
+                val currentScore = minimax(board, 0, symbol == 'O')
+
+                board[i] = (i + 49).toChar()
+
+                if (symbol == 'X') {
+                    if (currentScore > bestScore) {
+                        bestScore = currentScore
+                        bestMove = i
+                    }
+                } else {
+                    if (currentScore < bestScore) {
+                        bestScore = currentScore
+                        bestMove = i
+                    }
+                }
+            }
+        }
+
+        board[bestMove] = symbol
+        return bestMove
+    }
+
+    fun computerMoveRandom(board: Array<Char>, symbol: Char): Int{
         val availableCells =
             gameBoard.filter { it != 'X' && it != 'O' }.map { it.toString().toInt() - 1 }
         val randomCellIndex = availableCells[Random.nextInt(availableCells.size)]
 
-        gameBoard[randomCellIndex] = currentPlayer
-        buttons[randomCellIndex].text = currentPlayer.toString()
+        board[randomCellIndex] = symbol
+
+        return randomCellIndex
+    }
+
+
+    private fun computerMove() {
+
+        // val randomCellIndex = computerMoveRandom(gameBoard, currentPlayer)
+
+        val calculatedCellIndex = computerMoveMinMax(gameBoard, currentPlayer)
+
+        buttons[calculatedCellIndex].text = currentPlayer.toString()
 
         if (evaluateBoard(gameBoard) == 10 || evaluateBoard(gameBoard) == -10 || isBoardFull(
                 gameBoard
