@@ -30,6 +30,18 @@ class GameActivity : AppCompatActivity() {
         else -> @Suppress("DEPRECATION") getSerializableExtra(key) as? T
     }
 
+    private fun showPlayerFirstDialog() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Who goes first?")
+            .setCancelable(false)
+            .setPositiveButton("Player") { _, _ ->
+                // Oyuncu önce başlar, herhangi bir değişiklik yapmaya gerek yok
+            }
+            .setNegativeButton("Computer") { _, _ ->
+                computerMove()
+            }
+            .show()
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_game)
@@ -48,6 +60,10 @@ class GameActivity : AppCompatActivity() {
         }
 
         gameStatusText.text = getString(R.string.player_turn, currentPlayer)
+
+        if (gameMode == GameMode.PvC) {
+            showPlayerFirstDialog()
+        }
     }
 
     private fun showGameOverDialog() {
@@ -102,7 +118,7 @@ class GameActivity : AppCompatActivity() {
                     currentPlayer = if (currentPlayer == 'X') 'O' else 'X'
                     gameStatusText.text = getString(R.string.player_turn, currentPlayer)
 
-                    if (gameMode == GameMode.PvC && currentPlayer == 'O') {
+                    if (gameMode == GameMode.PvC) {
                         computerMove()
                     }
                 }
