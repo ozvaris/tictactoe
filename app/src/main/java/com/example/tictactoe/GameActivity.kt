@@ -13,11 +13,25 @@ import androidx.gridlayout.widget.GridLayout
 import java.io.Serializable
 import kotlin.random.Random
 class GameActivity : AppCompatActivity() {
+
+    private lateinit var centerScoreText: TextView
+    private lateinit var drawScoreText: TextView
+
     private var difficulty: Difficulty = Difficulty.MEDIUM
     private var currentPlayer: Char = 'X'
 
-    private var Player1Name: String = "Player1"
-    private var Player2Name: String = "Player2"
+    private var player1Name: String = "Player1"
+    private var player2Name: String = "Player2"
+    private var player1ShortName: String = "P1"
+    private var player2ShortName: String = "P2"
+
+    private var scoreName1: String = player1ShortName
+    private var scoreName2: String = player2ShortName
+    private var score1: Int = 0
+    private var score2: Int = 0
+    private var drawScore: Int = 0
+
+    private var scoreText: String = "$player1ShortName $score1-$score2 $player2ShortName"
 
     private lateinit var gameMode: GameMode
     private lateinit var gameStatusText: TextView
@@ -33,27 +47,13 @@ class GameActivity : AppCompatActivity() {
     //     else -> @Suppress("DEPRECATION") getSerializableExtra(key) as? T
     // }
 
-    private fun showPlayerFirstDialog() {
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle("Who goes first?")
-            .setCancelable(false)
-            .setPositiveButton("Player") { _, _ ->
-                // Oyuncu önce başlar, herhangi bir değişiklik yapmaya gerek yok
-                Player1Name = "Player"
-                Player2Name = "Computer"
-            }
-            .setNegativeButton("Computer") { _, _ ->
-                Player1Name = "Computer"
-                Player2Name = "Player"
-                computerMove(true)
-            }
-            .show()
-    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_game)
 
         gameStatusText = findViewById<TextView>(R.id.statusTextView)
+        drawScoreText = findViewById<TextView>(R.id.drawScoreTextView)
+        centerScoreText = findViewById<TextView>(R.id.centerScoreTextView)
         val gridLayout: GridLayout = findViewById(R.id.gridLayout)
 
         gameMode = GameMode.values()[intent.getIntExtra("gameMode", 0)]
@@ -74,7 +74,7 @@ class GameActivity : AppCompatActivity() {
     }
 
     private fun getPlayerName() : String {
-        return if (currentPlayer == 'X') Player1Name else Player2Name
+        return if (currentPlayer == 'X') player1Name else player2Name
     }
 
     private fun showGameOverDialog(resultMessage: String) {
@@ -83,8 +83,7 @@ class GameActivity : AppCompatActivity() {
         val dialog = builder.setTitle("Game Over")
             .setMessage("$resultMessage\nDo you want to play again or exit?")
             .setPositiveButton("New Game") { _, _ ->
-                finish()
-                startActivity(intent)
+                resetGame()
             }
             .setNegativeButton("Exit") { _, _ ->
                 finish()
@@ -105,6 +104,22 @@ class GameActivity : AppCompatActivity() {
         dialog.show()
     }
 
+    private fun resetGame() {
+        gameBoard = arrayOf('1', '2', '3', '4', '5', '6', '7', '8', '9')
+        currentPlayer = 'X'
+        gameStatusText.text = getString(R.string.player_turn, getPlayerName())
+
+        for (i in buttons.indices) {
+            buttons[i].text = ""
+        }
+
+        if (gameMode == GameMode.PvC) {
+            showPlayerFirstDialog()
+        } else if (gameMode == GameMode.CvC) {
+            computerMove()
+        }
+    }
+
     fun onCellClick(view: View) {
         if (gameMode != GameMode.CvC) {
             val button = view as Button
@@ -121,12 +136,14 @@ class GameActivity : AppCompatActivity() {
                     // Add winner information to the gameStatusText
                     if (evaluateBoard(gameBoard) == 10 || evaluateBoard(gameBoard) == -10) {
                         gameStatusText.text = getString(R.string.player_wins, getPlayerName())
+                        updateScores(getWinner())
                     } else {
                         gameStatusText.text = "Draw"
+                        updateScores(Winner.Draw)
                     }
                     showGameOverDialog(gameStatusText.text.toString())
                 } else {
-                    currentPlayer = if (currentPlayer == 'X') 'O' else 'X'
+                    currentPlayer = nextPlayer()
                     gameStatusText.text = getString(R.string.player_turn, getPlayerName())
 
                     if (gameMode == GameMode.PvC) {
@@ -232,7 +249,6 @@ class GameActivity : AppCompatActivity() {
         return randomCellIndex
     }
 
-
     private fun computerMove(randomPlay: Boolean? = false) {
 
         var calculatedCellIndex : Int = 0
@@ -271,18 +287,27 @@ class GameActivity : AppCompatActivity() {
             // Add winner information to the gameStatusText
             if (evaluateBoard(gameBoard) == 10 || evaluateBoard(gameBoard) == -10) {
                 gameStatusText.text = getString(R.string.player_wins, getPlayerName())
+                updateScores(getWinner())
             } else {
                 gameStatusText.text = "Draw"
+                updateScores(Winner.Draw)
             }
             showGameOverDialog(gameStatusText.text.toString())
         } else {
-            currentPlayer = if (currentPlayer == 'X') 'O' else 'X'
+            currentPlayer = nextPlayer()
             gameStatusText.text = getString(R.string.player_turn, getPlayerName())
 
             if (gameMode == GameMode.CvC) {
                 computerMove()
             }
         }
+    }
+
+    private fun getWinner(): Winner {
+        return if (currentPlayer == 'X') Winner.X else Winner.O
+    }
+    private fun nextPlayer(): Char {
+        return if (currentPlayer == 'X') 'O' else 'X'
     }
 
     override fun onResume() {
@@ -320,4 +345,76 @@ class GameActivity : AppCompatActivity() {
     private fun isBoardFull(board: Array<Char>): Boolean {
         return board.all { it == 'X' || it == 'O' }
     }
+
+    private fun setScoreText () {
+        centerScoreText.text = "$scoreName1 $score1-$score2 $scoreName2"
+    }
+    private fun showPlayerFirstDialog() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Who goes first?")
+            .setCancelable(false)
+            .setPositiveButton("Player") { _, _ ->
+                // Oyuncu önce başlar, herhangi bir değişiklik yapmaya gerek yok
+                player1Name = "Player"
+                player2Name = "Computer"
+
+                player1ShortName = "P"
+                player2ShortName = "C"
+
+                scoreName1 = player1ShortName
+                scoreName2 = player2ShortName
+
+                setScoreText()
+            }
+            .setNegativeButton("Computer") { _, _ ->
+                player1Name = "Computer"
+                player2Name = "Player"
+
+                player1ShortName = "C"
+                player2ShortName = "P"
+
+                scoreName1 = player2ShortName
+                scoreName2 = player1ShortName
+
+                setScoreText()
+
+                computerMove(true)
+            }
+            .show()
+
+
+    }
+    private fun updateScores(winner: Winner) {
+        when (winner) {
+            Winner.X -> {
+                when (gameMode) {
+                    GameMode.PvC -> {
+                        // player1ShortName P ise ve kazanan X ise Player kazanmıştır
+                        if (gameMode == GameMode.PvC) if (player1ShortName == "P") score1++ else score2++
+                    }
+                    else -> {score1++}
+                }
+
+                setScoreText()
+            }
+            Winner.O -> {
+                when (gameMode) {
+                    GameMode.PvC -> {
+                        // player1ShortName P ise ve kazanan 0 ise Player kazanmıştır
+                        if (player1ShortName == "P") score2++ else score1++
+                    }
+
+                    else -> {score2++}
+                }
+
+                setScoreText()
+            }
+            Winner.Draw -> {
+                drawScore++
+                drawScoreText.text = "Draw : $drawScore"
+            }
+        }
+    }
+
+    
 }

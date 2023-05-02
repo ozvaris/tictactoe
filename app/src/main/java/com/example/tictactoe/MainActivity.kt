@@ -6,6 +6,10 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Button
+
+enum class Winner {
+    X, O, Draw
+}
 enum class Difficulty {
     EASY, MEDIUM, HARD
 }

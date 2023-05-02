@@ -6,6 +6,43 @@
     android:layout_height="match_parent"
     tools:context=".GameActivity">
 
+    <LinearLayout
+        android:id="@+id/upperLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/leftTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="end"
+            android:paddingEnd="8dp"
+            android:text=""
+            android:textSize="24sp" />
+
+        <TextView
+            android:id="@+id/centerScoreTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="P1 0-0 P2"
+            android:textSize="24sp" />
+
+        <TextView
+            android:id="@+id/drawScoreTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="start"
+            android:paddingStart="8dp"
+            android:text="Draw : 0"
+            android:textSize="24sp" />
+    </LinearLayout>
+
     <TextView
         android:id="@+id/statusTextView"
         android:layout_width="wrap_content"
